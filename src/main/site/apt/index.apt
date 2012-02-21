@@ -1,0 +1,26 @@
+            ------
+            Overview
+            ------
+            Jeff Rodriguez
+            ------
+            ------
+
+XML Wrapper for Java
+
+  The XML Wrapper library is a set of lightweight wrapper classes to make
+  working with XML and the DOM in Java easier.
+
+
+Maven 2
+
++-------------------------------------------------------------------------------
+<dependencies>
+    ...
+    <dependency>
+        <groupId>com.jeffrodriguez</groupId>
+        <artifactId>xmlwrapper</artifactId>
+        <version>...</version>
+    </dependency>
+    ...
+</dependencies>
++-------------------------------------------------------------------------------
