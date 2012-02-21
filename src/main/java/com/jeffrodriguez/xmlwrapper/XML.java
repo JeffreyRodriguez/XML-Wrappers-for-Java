@@ -48,111 +48,131 @@ import org.xml.sax.SAXException;
 
 /**
  * A {@link Document} wrapping utility class.
- * @author <a href="mailto:jeff@jeffrodriguez.com">Jeff Rodriguez</a>
+ * @author Jeff
  */
 public class XML {
-    
+
     static {
         try {
-            
+
             // Create the document builder
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
-            documentBuilder = dbf.newDocumentBuilder();
-            
+            DOCUMENT_BUILDER = dbf.newDocumentBuilder();
+
             // Create the transformers
             TransformerFactory tf = TransformerFactory.newInstance();
-            transformer = tf.newTransformer();
-            
+            TRANSFORMER = tf.newTransformer();
+
             Transformer tp = tf.newTransformer();
             tp.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformerPretty = tp;
-            
+            TRANSFORMER_PRETTY = tp;
+
             // Create XPath
             XPathFactory xpf = XPathFactory.newInstance();
-            xpath = xpf.newXPath();
+            XPATH = xpf.newXPath();
         } catch (Throwable t) {
             throw new Error("Failed to initialize static variables.", t);
         }
     }
-    
-    static final DocumentBuilder documentBuilder;
-    
-    static final Transformer transformerPretty;
-    
-    static final Transformer transformer;
-    
-    static final XPath xpath;
-    
+
+    /**
+     * A reusable {@link DocumentBuilder}, instantiated at class load.
+     */
+    private static final DocumentBuilder DOCUMENT_BUILDER;
+
+    /**
+     * A reusable {@link Transformer}, instantiated at class load.
+     *
+     * Transforms XML in a pretty (indented) manner.
+     */
+    private static final Transformer TRANSFORMER_PRETTY;
+
+    /**
+     * A reusable {@link Transformer}, instantiated at class load.
+     */
+    private static final Transformer TRANSFORMER;
+
+    /**
+     * A reusable {@link XPath}, instantiated at class load.
+     */
+    private static final XPath XPATH;
+
     /**
      * The wrapped document.
      */
     private Document document;
-    
+
     /**
      * Creates a new Document.
+     * @param rootName the name or the root element.
+     * @return a new {@link XML} instance with a single root element.
      */
     public static XML create(String rootName) {
-        Document document = documentBuilder.newDocument();
+        Document document = DOCUMENT_BUILDER.newDocument();
         Element root = document.createElement(rootName);
         document.appendChild(root);
         return new XML(document);
-        
     }
-    
+
     /**
      * Parses an XML string.
      * @param xml the XML string to parse.
-     * @return a parsed XML string.
-     * @throws SAXException if XML parsing fails.
+     * @return a new {@link XML} instance wrapping the parsed document.
+     * @throws SAXException if an exception occurs during XML parsing.
      * @throws IOException if an IO error occurs.
      */
-    public static XML parse (String xml) throws SAXException, IOException {
-        return new XML(documentBuilder.parse(new InputSource(new StringReader(xml))));
+    public static XML parse(String xml) throws SAXException, IOException {
+        return new XML(DOCUMENT_BUILDER.parse(new InputSource(new StringReader(xml))));
     }
-    
+
     /**
-     * Creates a new {@link XML} instance.
+     * Creates a new XML wrapper.
      * @param document the document to wrap.
      */
     public XML(Document document) {
         this.document = document;
     }
-    
+
     /**
      * @return the wrapped document.
      */
     public Document getDocument() {
         return document;
     }
-    
+
     /**
      * Evaluates an XPath expression.
      * @param expression the XPath expression.
-     * @return an {@ Iterable} over XMLElements.
-     * @throws XPathExpressionException 
+     * @return an {@link Iterable} over the {@link XMLElement}s.
+     * @throws XPathExpressionException If expression cannot be compiled.
      */
     public Iterable<XMLElement> xpathElements(String expression) throws XPathExpressionException {
-        
-        // Get a node list from the xpath expression
-        final NodeList nodes = (NodeList) XML.xpath
+
+        // Get a node list from the XPATH expression
+        final NodeList nodes = (NodeList) XML.XPATH
                                              .compile(expression)
                                              .evaluate(document, XPathConstants.NODESET);
-        
+
         // Return the iterable
         NodeListIterator<Element> nodeListIterator = new NodeListIterator(nodes);
-        
+
         return new XMLElementIterator(nodeListIterator).toIterable();
     }
-    
+
     /**
      * Formats the XML document as a string.
      * @param pretty true if the document should be indented.
      * @return the XML document as a string.
+     * @throws TransformerException If an unrecoverable error occurs during the course of the transformation.
      */
     public String toString(boolean pretty) throws TransformerException {
         StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(document), new StreamResult(writer));
+        if (pretty) {
+            TRANSFORMER_PRETTY.transform(new DOMSource(document), new StreamResult(writer));
+        } else {
+            TRANSFORMER.transform(new DOMSource(document), new StreamResult(writer));
+        }
         return writer.toString();
     }
 
@@ -162,5 +182,5 @@ public class XML {
     public XMLElement getRoot() {
         return new XMLElement(document.getDocumentElement());
     }
-    
+
 }

@@ -35,12 +35,12 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:jeff@jeffrodriguez.com">Jeff Rodriguez</a>
  */
 public class NodeListIterator<T extends Node> implements Iterator<T> {
-    
+
     /**
-     * The wrapped NodeList
+     * The wrapped NodeList.
      */
     private final NodeList nodes;
-    
+
     /**
      * The position in the list.
      */
@@ -50,29 +50,29 @@ public class NodeListIterator<T extends Node> implements Iterator<T> {
      * Creates a new {@link NodeListIterator}.
      * @param nodes the {@link NodeList} to iterate over.
      */
-    public NodeListIterator(NodeList nodes) {
+    public NodeListIterator(final NodeList nodes) {
         this.nodes = nodes;
     }
 
     @Override
-    public boolean hasNext() {
+    public final boolean hasNext() {
         return position < nodes.getLength();
     }
 
     @Override
-    public T next() {
+    public final T next() {
         return (T) nodes.item(position++);
     }
 
     @Override
-    public void remove() {
+    public final void remove() {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * @return an {@link Iterable} for this iterator.
      */
-    public Iterable<T> toIterable() {
+    public final Iterable<T> toIterable() {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
@@ -80,5 +80,5 @@ public class NodeListIterator<T extends Node> implements Iterator<T> {
             }
         };
     }
-    
+
 }

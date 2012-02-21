@@ -33,30 +33,42 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:jeff@jeffrodriguez.com">Jeff Rodriguez</a>
  */
 public class XMLElement {
+
+    /**
+     * The wrapped {@link Element}.
+     */
     private final Element element;
 
     /**
-     * Wraps an {@link Element}
+     * Wraps an {@link Element}.
      * @param element the element to wrap.
      */
     public XMLElement(Element element) {
         this.element = element;
     }
-    
+
     /**
      * @return the wrapped element.
      */
     public Element getElement() {
         return element;
     }
-    
+
     /**
      * @return the parent of this element.
      */
     public XMLElement getParent() {
         return new XMLElement((Element) element.getParentNode());
     }
-    
+
+    /**
+     * Gets the tag name of the element.
+     * @return the tag name of the element.
+     */
+    public String getName() {
+        return element.getTagName();
+    }
+
     /**
      * Creates a new child element and appends it to this one.
      * @param name the name of the element.
@@ -67,14 +79,6 @@ public class XMLElement {
         element.appendChild(child);
         return new XMLElement(child);
     }
-    
-    /**
-     * Adds a new child element to this one.
-     * @param child the child element.
-     */
-    public void addChild(XMLElement child) {
-        element.appendChild(child.getElement());
-    }
 
     /**
      * Gets a child by tag name.
@@ -84,14 +88,14 @@ public class XMLElement {
      */
     public XMLElement getChild(String name) {
         NodeList nodes = element.getElementsByTagName(name);
-        
+
         // Make sure there's only one
         if (nodes.getLength() > 1) {
             throw new IllegalStateException("More than one element with the name: " + name);
         } else if (nodes.getLength() < 1) {
             throw new IllegalStateException("No elements with the name: " + name);
         }
-        
+
         // Get the element
         return new XMLElement((Element) nodes.item(0));
     }
@@ -102,13 +106,15 @@ public class XMLElement {
      * @return an {@lterable} of the children.
      */
     public Iterable<XMLElement> getChildren(String name) {
+
         // Get the child element node list
         final NodeList nodes = element.getElementsByTagName(name);
+
         // Build the iterators
         final NodeListIterator<Element> nodeListIterator = new NodeListIterator(nodes);
         return new XMLElementIterator(nodeListIterator).toIterable();
     }
-    
+
     /**
      * Sets an attribute on the element.
      * @param name the name of the attribute.
@@ -119,7 +125,7 @@ public class XMLElement {
         element.setAttribute(name, value);
         return this;
     }
-    
+
     /**
      * Gets the value of an attribute.
      * @param name the name of the attribute.
@@ -127,6 +133,14 @@ public class XMLElement {
      */
     public String getAttribute(String name) {
         return element.getAttribute(name);
+    }
+
+    /**
+     * Sets the text content of the element.
+     * @param value the value to set.
+     */
+    public void setValue(String value) {
+        element.setTextContent(value);
     }
 
     /**
@@ -143,11 +157,11 @@ public class XMLElement {
      */
     public Long getValueAsLong() {
         String value = getValue();
-        
+
         if (value == null || value.isEmpty()) {
             return null;
         }
-        
+
         return Long.parseLong(value);
     }
 
@@ -157,12 +171,12 @@ public class XMLElement {
      */
     public Integer getValueAsInteger() {
         String value = getValue();
-        
+
         if (value == null || value.isEmpty()) {
             return null;
         }
-        
+
         return Integer.parseInt(value);
     }
-    
+
 }

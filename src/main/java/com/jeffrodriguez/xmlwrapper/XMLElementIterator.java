@@ -41,7 +41,7 @@ public class XMLElementIterator implements Iterator<XMLElement> {
 
     /**
      * Creates a new {@link XMLElementIterator}.
-     * @param iterator 
+     * @param iterator the {@link NodeListIterator} to wrap.
      */
     public XMLElementIterator(NodeListIterator<Element> iterator) {
         this.iterator = iterator;
@@ -61,7 +61,7 @@ public class XMLElementIterator implements Iterator<XMLElement> {
     public void remove() {
         iterator.remove();
     }
-    
+
     /**
      * @return an {@link Iterable} for this iterator.
      */
