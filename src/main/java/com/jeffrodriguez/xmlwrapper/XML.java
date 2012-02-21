@@ -1,0 +1,166 @@
+/* This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or
+ * distribute this software, either in source code form or as a compiled
+ * binary, for any purpose, commercial or non-commercial, and by any
+ * means.
+ *
+ * In jurisdictions that recognize copyright laws, the author or authors
+ * of this software dedicate any and all copyright interest in the
+ * software to the public domain. We make this dedication for the benefit
+ * of the public at large and to the detriment of our heirs and
+ * successors. We intend this dedication to be an overt act of
+ * relinquishment in perpetuity of all present and future rights to this
+ * software under copyright law.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <http://unlicense.org/>
+ */
+package com.jeffrodriguez.xmlwrapper;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+/**
+ * A {@link Document} wrapping utility class.
+ * @author <a href="mailto:jeff@jeffrodriguez.com">Jeff Rodriguez</a>
+ */
+public class XML {
+    
+    static {
+        try {
+            
+            // Create the document builder
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            documentBuilder = dbf.newDocumentBuilder();
+            
+            // Create the transformers
+            TransformerFactory tf = TransformerFactory.newInstance();
+            transformer = tf.newTransformer();
+            
+            Transformer tp = tf.newTransformer();
+            tp.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformerPretty = tp;
+            
+            // Create XPath
+            XPathFactory xpf = XPathFactory.newInstance();
+            xpath = xpf.newXPath();
+        } catch (Throwable t) {
+            throw new Error("Failed to initialize static variables.", t);
+        }
+    }
+    
+    static final DocumentBuilder documentBuilder;
+    
+    static final Transformer transformerPretty;
+    
+    static final Transformer transformer;
+    
+    static final XPath xpath;
+    
+    /**
+     * The wrapped document.
+     */
+    private Document document;
+    
+    /**
+     * Creates a new Document.
+     */
+    public static XML create(String rootName) {
+        Document document = documentBuilder.newDocument();
+        Element root = document.createElement(rootName);
+        document.appendChild(root);
+        return new XML(document);
+        
+    }
+    
+    /**
+     * Parses an XML string.
+     * @param xml the XML string to parse.
+     * @return a parsed XML string.
+     * @throws SAXException if XML parsing fails.
+     * @throws IOException if an IO error occurs.
+     */
+    public static XML parse (String xml) throws SAXException, IOException {
+        return new XML(documentBuilder.parse(new InputSource(new StringReader(xml))));
+    }
+    
+    /**
+     * Creates a new {@link XML} instance.
+     * @param document the document to wrap.
+     */
+    public XML(Document document) {
+        this.document = document;
+    }
+    
+    /**
+     * @return the wrapped document.
+     */
+    public Document getDocument() {
+        return document;
+    }
+    
+    /**
+     * Evaluates an XPath expression.
+     * @param expression the XPath expression.
+     * @return an {@ Iterable} over XMLElements.
+     * @throws XPathExpressionException 
+     */
+    public Iterable<XMLElement> xpathElements(String expression) throws XPathExpressionException {
+        
+        // Get a node list from the xpath expression
+        final NodeList nodes = (NodeList) XML.xpath
+                                             .compile(expression)
+                                             .evaluate(document, XPathConstants.NODESET);
+        
+        // Return the iterable
+        NodeListIterator<Element> nodeListIterator = new NodeListIterator(nodes);
+        
+        return new XMLElementIterator(nodeListIterator).toIterable();
+    }
+    
+    /**
+     * Formats the XML document as a string.
+     * @param pretty true if the document should be indented.
+     * @return the XML document as a string.
+     */
+    public String toString(boolean pretty) throws TransformerException {
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(document), new StreamResult(writer));
+        return writer.toString();
+    }
+
+    /**
+     * @return the root document element.
+     */
+    public XMLElement getRoot() {
+        return new XMLElement(document.getDocumentElement());
+    }
+    
+}
