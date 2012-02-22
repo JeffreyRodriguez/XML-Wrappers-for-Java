@@ -103,7 +103,7 @@ public class XMLElement {
     /**
      * Gets an {@link Iterable} for the children of this element by tag name.
      * @param name the tag name of the children.
-     * @return an {@lterable} of the children.
+     * @return an {@link Iterable} of the children.
      */
     public Iterable<XMLElement> getChildren(String name) {
 
