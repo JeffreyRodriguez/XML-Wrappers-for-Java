@@ -1,3 +1,98 @@
+XML Wrappers for Java
+=====================
+
 A lightweight set of wrappers around the Java DOM XML classes.
 
 Send complaints, suggestions, and thanks to jeff@jeffrodriguez.com
+
+
+Creating an XML Instance
+------------------------
+
+### Wrap an existing document
+    XML xml = new XML(document);
+
+### Parse a string
+    XML xml = XML.parse("<?xml version=\"1.0\"?><foo/>");
+
+### Create from scratch
+    XML xml = XML.create("foo");
+
+
+Outputting XML
+------------------------
+
+### Pretty formatting
+    xml.toString(true);
+
+### Compact formatting
+    xml.toString(false);
+
+
+Working with Elements
+---------------------
+
+### Getting the document element
+    XMLElement root = xml.getRoot();
+
+### Adding children to an element
+    root.addChild("bar"); // foo -> bar
+    root.addChild("baz"); // foo -> bar
+                          //     -> baz
+
+### Chaining
+    root.addChild("bar").addChild("baz"); // foo -> bar -> baz
+
+### Navigating
+    root.getChild("bar").getParent(); // foo
+
+### Iterating
+    // Enhanced for-loop
+    for (XMLElement child : root.getChildren("bar")) {
+        // Do something with child
+    }
+
+    // Traditional iterator
+    Iterator<XMLElement> it = root.getChildren("bar").iterator();
+    while (it.hasNext()) {
+        XMLElement child = it.next();
+        // Do something with child
+    }
+
+### Element Text
+
+    // String
+    root.setValue("bar");
+    root.getValue();      // "bar"
+
+    // Integer
+    root.setValue("1");
+    root.getValueAsInteger(); // 1
+
+    // Long
+    root.setValue("1");
+    root.getValueAsLong(); // 1L
+
+
+Attributes
+----------
+    XMLElement element = xml.getRoot();
+    element.setAttribute("bar", "baz");
+    element.getAttribute("bar");        // "baz"
+
+XPath Support
+-------------
+The `xpathElements("...")` method allows you to use XPath expressions on your
+document:
+
+    // Enhanced for-loop
+    for (XMLElement child : xml.xpathElements("//bar")) {
+        // Do something with child
+    }
+
+    // Traditional iterator
+    Iterator<XMLElement> it = xml.xpathElements("//bar").iterator();
+    while (it.hasNext()) {
+        XMLElement child = it.next();
+        // Do something with child
+    }
