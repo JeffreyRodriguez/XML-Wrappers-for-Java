@@ -5,6 +5,20 @@ A lightweight set of wrappers around the Java DOM XML classes.
 
 Send complaints, suggestions, and thanks to jeff@jeffrodriguez.com
 
+Maven
+-----
+This project uses Sonatype's OSS Nexus hosting to sync to Maven central.
+
+    <dependencies>
+        ...
+        <dependency>
+            <groupId>com.jeffrodriguez</groupId>
+            <artifactId>xmlwrapper</artifactId>
+            <version>1.0</version>
+        </dependency>
+        ...
+    </dependencies>
+
 
 Creating an XML Instance
 ------------------------
