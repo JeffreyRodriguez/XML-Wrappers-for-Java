@@ -14,11 +14,27 @@ This project uses Sonatype's OSS Nexus hosting to sync to Maven central.
         <dependency>
             <groupId>com.jeffrodriguez</groupId>
             <artifactId>xmlwrapper</artifactId>
-            <version>1.0</version>
+            <version>1.3.0</version>
         </dependency>
         ...
     </dependencies>
 
+Versioning
+----------
+
+For transparency and insight into our release cycle, and for striving to maintain backward compatibility, XML Wrapper will be maintained under the Semantic Versioning guidelines as much as possible.
+
+Releases will be numbered with the follow format:
+
+`<major>.<minor>.<patch>`
+
+And constructed with the following guidelines:
+
+* Breaking backward compatibility bumps the major
+* New additions without breaking backward compatibility bumps the minor
+* Bug fixes and misc changes bump the patch
+
+For more information on SemVer, please visit http://semver.org/.
 
 Creating an XML Instance
 ------------------------
@@ -31,6 +47,9 @@ Creating an XML Instance
 
 ### Create from scratch
     XML xml = XML.create("foo");
+
+### Clone an instance
+    XML clone = xml.clone();
 
 
 Outputting XML
