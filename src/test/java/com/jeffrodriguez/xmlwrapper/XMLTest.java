@@ -128,10 +128,14 @@ public class XMLTest {
         System.out.println("toString");
 
         StringBuilder xml = new StringBuilder();
-        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n");
-        xml.append("<foo>\r\n");
-        xml.append("  <bar/>\r\n");
-        xml.append("</foo>\r\n");
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+        xml.append(System.lineSeparator());
+        xml.append("<foo>");
+        xml.append(System.lineSeparator());
+        xml.append("  <bar/>");
+        xml.append(System.lineSeparator());
+        xml.append("</foo>");
+        xml.append(System.lineSeparator());
 
         String expected = xml.toString();
 
