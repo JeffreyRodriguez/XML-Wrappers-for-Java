@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
  * A {@link Document} wrapping utility class.
  * @author Jeff
  */
-public class XML {
+public class XML implements Cloneable {
 
     static {
         try {
@@ -181,6 +181,16 @@ public class XML {
      */
     public XMLElement getRoot() {
         return new XMLElement(document.getDocumentElement());
+    }
+
+    /**
+     * Clones this XML instance, and the underlying {@link Document}.
+     * @return a new XML instance wrapping the new {@link Document} clone.
+     * @see Document#cloneNode(boolean);
+     */
+    @Override
+    public XML clone() {
+        return new XML((Document) document.cloneNode(true));
     }
 
 }
