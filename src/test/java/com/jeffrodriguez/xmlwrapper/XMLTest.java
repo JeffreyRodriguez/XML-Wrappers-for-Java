@@ -127,15 +127,18 @@ public class XMLTest {
     public void testToStringTrue() throws Exception {
         System.out.println("toString");
 
+        // Get the system line separator
+        String lineSeparator = System.getProperty("line.separator");
+
         StringBuilder xml = new StringBuilder();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-        xml.append(System.lineSeparator());
+        xml.append(lineSeparator);
         xml.append("<foo>");
-        xml.append(System.lineSeparator());
+        xml.append(lineSeparator);
         xml.append("  <bar/>");
-        xml.append(System.lineSeparator());
+        xml.append(lineSeparator);
         xml.append("</foo>");
-        xml.append(System.lineSeparator());
+        xml.append(lineSeparator);
 
         String expected = xml.toString();
 
