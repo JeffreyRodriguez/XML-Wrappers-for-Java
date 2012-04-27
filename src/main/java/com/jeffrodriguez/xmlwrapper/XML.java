@@ -186,7 +186,7 @@ public class XML implements Cloneable {
     /**
      * Clones this XML instance, and the underlying {@link Document}.
      * @return a new XML instance wrapping the new {@link Document} clone.
-     * @see Document#cloneNode(boolean);
+     * @see Document#cloneNode(boolean)
      */
     @Override
     public XML clone() {
