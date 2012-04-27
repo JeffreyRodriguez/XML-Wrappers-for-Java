@@ -26,6 +26,7 @@
 package com.jeffrodriguez.xmlwrapper;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -83,8 +84,8 @@ public class XMLElement {
     /**
      * Gets a child by tag name.
      * @param name the name of the tag.
-     * @return the child element.
-     * @throws IllegalStateException if more than one, or zero elements with the name are found.
+     * @return the child element, or null if the child doesn't exist.
+     * @throws IllegalStateException if more than one element with the name are found.
      */
     public XMLElement getChild(String name) {
         NodeList nodes = element.getElementsByTagName(name);
@@ -93,11 +94,46 @@ public class XMLElement {
         if (nodes.getLength() > 1) {
             throw new IllegalStateException("More than one element with the name: " + name);
         } else if (nodes.getLength() < 1) {
-            throw new IllegalStateException("No elements with the name: " + name);
+            return null;
         }
 
         // Get the element
         return new XMLElement((Element) nodes.item(0));
+    }
+
+    /**
+     * Gets the value of a child element's text content.
+     * @return the child element's text content or null if the child does not exist.
+     */
+    public String getChildValue(String name) {
+
+        XMLElement child = getChild(name);
+        if (child != null) {
+            return child.getValue();
+        }
+
+        return null;
+    }
+
+    /**
+     * Sets the value of a child element's text content.
+     *
+     * If the child doesn't exist, a new element will be created.
+     * @return the child element.
+     */
+    public XMLElement setChildValue(String name, String value) {
+
+        // Get the child
+        XMLElement child = getChild(name);
+
+        // Create the child if it doesn't exist yet
+        if (child == null) {
+            child = addChild(name);
+        }
+
+        // Set it's value and return the child
+        child.setValue(value);
+        return child;
     }
 
     /**
@@ -113,6 +149,35 @@ public class XMLElement {
         // Build the iterators
         final NodeListIterator<Element> nodeListIterator = new NodeListIterator(nodes);
         return new XMLElementIterator(nodeListIterator).toIterable();
+    }
+
+    /**
+     * Returns true if an element has children.
+     * @return true if the element has children.
+     */
+    public boolean hasChildren() {
+        NodeListIterator iterator = new NodeListIterator(element.getChildNodes());
+
+        while (iterator.hasNext()) {
+            return iterator.next() instanceof Element;
+        }
+
+        return false;
+    }
+    /**
+     * Returns true if a child element of the specified name exists.
+     * @return true if the specified child element exists.
+     */
+    public boolean hasChild(String name) {
+        NodeListIterator iterator = new NodeListIterator(element.getChildNodes());
+
+        while (iterator.hasNext()) {
+            Node node = iterator.next();
+
+            return node instanceof Element && ((Element) node).getTagName().equals(name);
+        }
+
+        return false;
     }
 
     /**
@@ -177,6 +242,28 @@ public class XMLElement {
         }
 
         return Integer.parseInt(value);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.element != null ? this.element.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final XMLElement other = (XMLElement) obj;
+        if (this.element != other.element && (this.element == null || !this.element.equals(other.element))) {
+            return false;
+        }
+        return true;
     }
 
 }

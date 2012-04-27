@@ -193,4 +193,26 @@ public class XML implements Cloneable {
         return new XML((Document) document.cloneNode(true));
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + (this.document != null ? this.document.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final XML other = (XML) obj;
+        if (this.document != other.document && (this.document == null || !this.document.equals(other.document))) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -210,4 +210,40 @@ public class XMLTest {
         assertEquals("baz", clone.getRoot().getValue());
     }
 
+    /**
+     * Test of equals method, of class XML.
+     */
+    @Test
+    public void testEquals_true() {
+        System.out.println("equals_true");
+
+        XML xml = XML.create("foo");
+        assertEquals(xml, xml);
+    }
+
+    /**
+     * Test of equals method, of class XML.
+     */
+    @Test
+    public void testEquals_false() {
+        System.out.println("equals_false");
+
+        XML foo = XML.create("foo");
+        XML bar = XML.create("bar");
+
+        assertFalse(foo.equals(bar));
+    }
+
+    /**
+     * Test of hashCode method, of class XML.
+     */
+    @Test
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        XML xml = XML.create("foo");
+
+        assertEquals(xml.hashCode(), xml.hashCode());
+    }
+
 }
