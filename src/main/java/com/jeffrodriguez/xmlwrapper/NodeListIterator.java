@@ -37,6 +37,16 @@ import org.w3c.dom.NodeList;
 public class NodeListIterator<T extends Node> implements Iterator<T> {
 
     /**
+     * Shorthand for creating a new NodeListIterator and calling it's {@link #toIterable()} method.
+     * @param <V> the node type.
+     * @param nodes the nodes to iterate.
+     * @return a new {@link Iterable<V>}.
+     */
+    public static <V extends Node> Iterable<V> iterable(NodeList nodes) {
+        return new NodeListIterator<V>(nodes).toIterable();
+    }
+
+    /**
      * The wrapped NodeList.
      */
     private final NodeList nodes;
@@ -66,7 +76,17 @@ public class NodeListIterator<T extends Node> implements Iterator<T> {
 
     @Override
     public final void remove() {
-        throw new UnsupportedOperationException();
+
+        // Get the node
+        Node node = nodes.item(position);
+
+        // Use the parent node to remove the child
+        node.getParentNode().removeChild(node);
+
+        // Decrement the position indicator
+        if (position > 0) {
+            position--;
+        }
     }
 
     /**
