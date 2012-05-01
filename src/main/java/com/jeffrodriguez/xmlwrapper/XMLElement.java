@@ -28,6 +28,7 @@ package com.jeffrodriguez.xmlwrapper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * An {@link Element} wrapping utility class.
@@ -88,17 +89,33 @@ public class XMLElement {
      * @throws IllegalStateException if more than one element with the name are found.
      */
     public XMLElement getChild(String name) {
-        NodeList nodes = element.getElementsByTagName(name);
 
-        // Make sure there's only one
-        if (nodes.getLength() > 1) {
-            throw new IllegalStateException("More than one element with the name: " + name);
-        } else if (nodes.getLength() < 1) {
+        // The first matching child will be kept here
+        Node child = null;
+
+        // Iterate over all the child nodes
+        for (Node node : new NodeListIterator<Node>(element.getChildNodes()).toIterable()) {
+
+            // Look for Element instances that match the name given
+            if (node instanceof Element && name.equals(node.getNodeName())) {
+
+                // If the child is already set, we can't handle this
+                if (child != null) {
+                    throw new IllegalStateException("More than one element with the name: " + name);
+                }
+
+                // Save the child node
+                child = node;
+            }
+        }
+
+        // Return null if no child was found
+        if (child == null) {
             return null;
         }
 
         // Get the element
-        return new XMLElement((Element) nodes.item(0));
+        return new XMLElement((Element) child);
     }
 
     /**
@@ -205,7 +222,25 @@ public class XMLElement {
      * @param value the value to set.
      */
     public void setValue(String value) {
-        element.setTextContent(value);
+
+        // Delete any existing text/cdata nodes
+        NodeListIterator iterator = new NodeListIterator(element.getChildNodes());
+        while (iterator.hasNext()) {
+
+            // Get the child node
+            Node child = iterator.next();
+
+            // Delete the child node if it's text or cdata
+            switch (child.getNodeType()) {
+                case Node.TEXT_NODE:
+                case Node.CDATA_SECTION_NODE:
+                    iterator.remove();
+            }
+        }
+
+        // Create a new text node
+        Text textNode = element.getOwnerDocument().createTextNode(value);
+        element.appendChild(textNode);
     }
 
     /**
@@ -213,7 +248,18 @@ public class XMLElement {
      * @return the element's text content.
      */
     public String getValue() {
-        return element.getTextContent();
+        StringBuilder value = new StringBuilder();
+
+        // Append the values of text and cdata nodes.
+        for (Node child : NodeListIterator.iterable(element.getChildNodes())) {
+            switch (child.getNodeType()) {
+                case Node.TEXT_NODE:
+                case Node.CDATA_SECTION_NODE:
+                    value.append(child.getNodeValue());
+            }
+        }
+
+        return value.toString();
     }
 
     /**

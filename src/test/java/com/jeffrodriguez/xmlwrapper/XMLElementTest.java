@@ -123,6 +123,25 @@ public class XMLElementTest {
 
     /**
      * Test of getChild method, of class XMLElement.
+     *
+     * We want direct descendents only.
+     */
+    @Test
+    public void testGetChild_directDescendent() {
+        System.out.println("getChild");
+
+        XML xml = XML.create("foo");
+        XMLElement bar1 = xml.getRoot().addChild("bar");
+        bar1.setValue("1");
+
+        XMLElement bar2 = bar1.addChild("bar");
+        bar2.setValue("2");
+
+        assertEquals("1", xml.getRoot().getChild("bar").getValue());
+    }
+
+    /**
+     * Test of getChild method, of class XMLElement.
      */
     @Test
     public void testGetChild_doesNotExist() {
@@ -238,7 +257,22 @@ public class XMLElementTest {
     }
 
     /**
-     * Test of setValue method, of class XMLElement.
+     * Test of getValue method, of class XMLElement.
+     *
+     * We only want the value of direct descendants.
+     */
+    @Test
+    public void testGetValue_directDescendants() throws Exception {
+        System.out.println("getValue");
+
+        xml.getRoot().setValue("xyz");
+        xml.getRoot().getChild("bar").setValue("xyz");
+
+        assertEquals("xyz", xml.getRoot().getValue());
+    }
+
+    /**
+     * Test of getValue and setValue methods, of class XMLElement.
      */
     @Test
     public void testGetValueSetValue() {
