@@ -14,7 +14,7 @@ This project uses Sonatype's OSS Nexus hosting to sync to Maven central.
         <dependency>
             <groupId>com.jeffrodriguez</groupId>
             <artifactId>xmlwrapper</artifactId>
-            <version>1.3.0</version>
+            <version>2.1.0</version>
         </dependency>
         ...
     </dependencies>
