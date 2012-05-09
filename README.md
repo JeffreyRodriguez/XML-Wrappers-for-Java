@@ -106,6 +106,9 @@ Working with Elements
     root.setValue("1");
     root.getValueAsLong(); // 1L
 
+    // Shorthand
+    root.setChildValue("bar", "baz"); // <bar>baz</bar>
+    root.getChildValue("bar");        // baz
 
 Attributes
 ----------
