@@ -191,7 +191,10 @@ public class XMLElement {
         while (iterator.hasNext()) {
             Node node = iterator.next();
 
-            return node instanceof Element && ((Element) node).getTagName().equals(name);
+            // If the element's name matches, return true.
+            if (node instanceof Element && ((Element) node).getTagName().equals(name)) {
+                return true;
+            }
         }
 
         return false;

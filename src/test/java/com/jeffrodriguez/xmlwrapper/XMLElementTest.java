@@ -220,6 +220,14 @@ public class XMLElementTest {
         System.out.println("hasChild_true");
         assertTrue(xml.getRoot().hasChild("bar"));
     }
+    /**
+     * Test of hasChild method, of class XMLElement.
+     */
+    @Test
+    public void testHasChild_trueSecondChild() {
+        System.out.println("hasChild_true");
+        assertTrue(xml.getRoot().hasChild("baz"));
+    }
 
     /**
      * Test of hasChildren method, of class XMLElement.
