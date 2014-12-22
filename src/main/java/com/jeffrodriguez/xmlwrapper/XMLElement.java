@@ -158,9 +158,26 @@ public class XMLElement {
      * @param name the tag name of the children.
      * @return an {@link Iterable} of the children.
      */
+    @SuppressWarnings("unchecked")
     public Iterable<XMLElement> getChildren(String name) {
 
         // Get the child element node list
+        final NodeList nodes = element.getChildNodes();
+
+        // Build the iterators
+        final NodeListIterator<Element> nodeListIterator = new NodeListIterator(nodes);
+        return new XMLElementByTagNameIterator(name, nodeListIterator).toIterable();
+    }
+
+    /**
+     * Gets an {@link Iterable} for the descendants of this element by tag name.
+     * @param name the tag name of the descendants.
+     * @return an {@link Iterable} of the descendants.
+     */
+    @SuppressWarnings("unchecked")
+    public Iterable<XMLElement> getDescendants(String name) {
+
+        // Get the descendant element node list
         final NodeList nodes = element.getElementsByTagName(name);
 
         // Build the iterators
