@@ -27,9 +27,9 @@
 package com.jeffrodriguez.xmlwrapper;
 
 import java.util.Iterator;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
 
 /**
  * @author <a href="mailto:jeff@jeffrodriguez.com">Jeff Rodriguez</a>
@@ -45,9 +45,10 @@ public class XMLElementTest {
             .addChild("bar")
             .setAttribute("baz", "qux");
 
-         xml.getRoot()
-            .addChild("baz")
-            .setAttribute("qux", "true");
+         XMLElement baz = xml.getRoot()
+            .addChild("baz");
+         baz.setAttribute("qux", "true");
+         baz.addChild("foobar").addChild("baz");
 
          xml.getRoot()
             .addChild("baz")
@@ -187,6 +188,28 @@ public class XMLElementTest {
 
         assertTrue(result.hasNext());
         assertEquals("true", result.next().getAttribute("qux"));
+
+        assertTrue(result.hasNext());
+        assertEquals("false", result.next().getAttribute("qux"));
+
+        assertFalse(result.hasNext());
+    }
+
+    /**
+     * Test of getDescendants method, of class XMLElement.
+     */
+    @Test
+    public void testGetDescendants() {
+        System.out.println("getDescendants");
+
+        XMLElement instance = xml.getRoot();
+        Iterator<XMLElement> result = instance.getDescendants("baz").iterator();
+
+        assertTrue(result.hasNext());
+        assertEquals("true", result.next().getAttribute("qux"));
+
+        assertTrue(result.hasNext());
+        assertEquals("", result.next().getAttribute("qux"));
 
         assertTrue(result.hasNext());
         assertEquals("false", result.next().getAttribute("qux"));
